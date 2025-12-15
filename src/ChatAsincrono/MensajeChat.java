@@ -14,6 +14,7 @@ import java.nio.charset.StandardCharsets;
 
 public class MensajeChat {
     
+    //Tipos de mensajes del protocolo
     public enum Tipo {
         HELLO,   
         TEXT,    
@@ -31,11 +32,13 @@ public class MensajeChat {
         this.contenido = (contenido != null) ? contenido : ""; 
     }
 
+    //Convierto el objeto a la trama de bytes
     public byte[] toTramaBytes() {
         String trama = tipo.name() + "|" + emisor + "|" + contenido;
         return trama.getBytes(StandardCharsets.UTF_8);
     }
     
+    //Construyo el objeto a partir del la recepción
     public static MensajeChat fromPaqueteUDP(DatagramPacket paquete) {
         String trama = new String(paquete.getData(), 0, paquete.getLength(), StandardCharsets.UTF_8);
         String[] partes = trama.split("\\|", 3); // Dividir por '|' en máximo 3 partes
@@ -51,7 +54,7 @@ public class MensajeChat {
             
             return new MensajeChat(tipo, emisor, contenido);
 
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) { //Por si el Tipo no es válido
             return null; 
         }
     }

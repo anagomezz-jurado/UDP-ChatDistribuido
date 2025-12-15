@@ -49,6 +49,8 @@ public class Main {
             System.out.println("   Puedes escribir mensajes. Escribe '/salir' para terminar.");
             System.out.println("------------------------------------------------");
 
+            
+            
             while (true) {
                 
                 System.out.print("[" + miNombre + "] >> ");

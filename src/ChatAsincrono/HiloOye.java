@@ -46,6 +46,7 @@ public class HiloOye implements Runnable {
                     System.out.println("\r[AVISO] << Trama de protocolo no válida recibida."); 
                 }
                 
+                //Mantiene el promt de escrituraa visible para el usuario
                 System.out.print("[Hablando] >> "); 
                 
             } catch (SocketException e) {
@@ -60,6 +61,7 @@ public class HiloOye implements Runnable {
         System.out.println("Hilo Oye (Receptor) terminado.");
     }
     
+    //Método para terminar de forma segura
     public void detener() {
         activo = false;
     }

@@ -38,30 +38,35 @@ public class Cliente {
             socket.setSoTimeout(TIMEOUT_DISCOVER_MS);
             socket.setBroadcast(true); 
 
-          
+            //Obtengo mi propia IP  para filtra mi respuesta
             InetAddress miIP = InetAddress.getLocalHost(); 
             System.out.println("Mi IP para filtrado: " + miIP.getHostAddress());
 
+            //Preparo el mensaje de HELLO
             InetAddress broadcastAddress = InetAddress.getByName(DIRECCION_BROADCAST);
             String mensaje = "@hola#" + nombre + "@";
             byte[] bufferEnvio = mensaje.getBytes();
 
             DatagramPacket paqueteEnvio = new DatagramPacket(bufferEnvio, bufferEnvio.length,
                     broadcastAddress, PUERTO);
-
+            
+            //Envío del Broadcast
             socket.send(paqueteEnvio);
             System.out.println("Paquete de descubrimiento (Broadcast) enviado.");
 
+            
+            //Bucle para recibir las respuestas
             while (true) {
                 byte[] bufferRecepcion = new byte[1024];
                 DatagramPacket respuesta = new DatagramPacket(bufferRecepcion, bufferRecepcion.length);
 
                 try {
-                    socket.receive(respuesta);
+                    socket.receive(respuesta); //Se bloquea hasta que haya repsuesta
                     
                     InetAddress origen = respuesta.getAddress();
                     String mensajeRespuesta = new String(respuesta.getData(), 0, respuesta.getLength());
 
+                    //Filtro la propia respuesta
                     if (origen.equals(miIP)) {
                         System.out.println("   (Paquete ignorado: Es mi propia IP)");
                         continue;
@@ -70,6 +75,8 @@ public class Cliente {
                     Pattern pattern = Pattern.compile("@hola#(.+?)@");
                     Matcher matcher = pattern.matcher(mensajeRespuesta);
 
+                    
+                    //Y valido el formato de respuesta
                     if (matcher.matches()) {
                         String nombreServidor = matcher.group(1);
                         InetSocketAddress amigo = new InetSocketAddress(origen, respuesta.getPort());
@@ -84,6 +91,7 @@ public class Cliente {
                 }
             }
             
+            //Muestro el resultado final
             System.out.println("\n--- Resumen de Descubrimiento ---");
             if (amigosEncontrados.isEmpty()) {
                 System.out.println("No se encontraron interlocutores en la red.");

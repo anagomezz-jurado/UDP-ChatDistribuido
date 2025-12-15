@@ -21,29 +21,34 @@ public class Servidor {
 
      public static void main(String[] args) throws Exception {
 
+         //Abro el puerto 9876 para escucharlo
         DatagramSocket socket = new DatagramSocket(PUERTO);
         System.out.println("Servidor escuchando en puerto " + PUERTO);
 
         byte[] buffer = new byte[1024];
 
+        //Creo un bucle para que empiece la conversación
         while (true) {
             try {
                 DatagramPacket paquete = new DatagramPacket(buffer, buffer.length);
-                socket.receive(paquete);
+                socket.receive(paquete); //Espero la llegada del paquete
 
                 String mensaje = new String(paquete.getData(), 0, paquete.getLength());
                 System.out.println("Recibido: " + mensaje);
 
+                //Valido la trama
                 Pattern pattern = Pattern.compile("@hola#(.+?)@");
                 Matcher matcher = pattern.matcher(mensaje);
 
                 if (matcher.matches()) {
                     String nombreCliente = matcher.group(1);
                     System.out.println("Saludo correcto de: " + nombreCliente);
-
+                       
+                    //Y construyo y envío la respuesta
                     String respuesta = "@hola#" + NOMBRE_SERVIDOR + "@";
                     byte[] datosRespuesta = respuesta.getBytes();
 
+                    //Envío la respuesta de vuelta a la IP y Puerto de donde vino el paquete
                     DatagramPacket paqueteRespuesta =
                             new DatagramPacket(datosRespuesta, datosRespuesta.length,
                                     paquete.getAddress(), paquete.getPort());
@@ -51,7 +56,7 @@ public class Servidor {
                     socket.send(paqueteRespuesta);
 
                 } else {
-                    System.out.println("⚠ Trama incorrecta, ignorada");
+                    System.out.println("Trama incorrecta, ignorada");
                 }
 
             } catch (Exception e) {

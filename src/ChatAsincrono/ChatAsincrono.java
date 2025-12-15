@@ -20,6 +20,7 @@ public class ChatAsincrono {
 
     public static void main(String[] args) throws Exception {
         
+        //Lectura del puerto
         if (args.length > 0) {
             try {
                 PUERTO_ESCUCHA = Integer.parseInt(args[0]);
@@ -43,10 +44,12 @@ public class ChatAsincrono {
         sc.nextLine(); 
 
         try {
+            //Configuración de parámetros de conexión
             InetAddress ipInterlocutor = InetAddress.getByName(ipInterlocutorStr);
             
             chatSocket = new DatagramSocket(PUERTO_ESCUCHA);
             
+            //Aranco el hilo receptor
             receptor = new HiloOye(chatSocket);
             Thread hiloReceptor = new Thread(receptor);
             hiloReceptor.start(); 
@@ -54,6 +57,8 @@ public class ChatAsincrono {
             System.out.println("\n Chat Asíncrono iniciado. Escuchando en " + PUERTO_ESCUCHA);
             System.out.println("------------------------------------------------");
 
+            
+            //Comienzo con el bucle de la conversación
             while (true) {
                 System.out.print("[Hablando] >> ");
                 String mensajeSalida = sc.nextLine(); 
@@ -66,6 +71,7 @@ public class ChatAsincrono {
                     break;
                 }
 
+                //Envío el mensaje TEXT
                 MensajeChat mensajeChat = new MensajeChat(MensajeChat.Tipo.TEXT, miNombre, mensajeSalida);
                 
                 byte[] sendData = mensajeChat.toTramaBytes();
