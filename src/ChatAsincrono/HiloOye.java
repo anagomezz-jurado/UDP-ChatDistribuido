@@ -14,6 +14,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
 
+
 public class HiloOye implements Runnable {
     
     private DatagramSocket socket;
@@ -33,9 +34,18 @@ public class HiloOye implements Runnable {
                 DatagramPacket paquete = new DatagramPacket(buffer, buffer.length);
                 socket.receive(paquete); 
                 
-                String mensaje = new String(paquete.getData(), 0, paquete.getLength());
-              
-                System.out.println("\r[RECEPTOR] << " + mensaje); 
+                MensajeChat mensajeRecibido = MensajeChat.fromPaqueteUDP(paquete);
+
+                if (mensajeRecibido != null) {
+                    if (mensajeRecibido.getTipo() == MensajeChat.Tipo.TEXT) {
+                        System.out.println("\r[" + mensajeRecibido.getEmisor() + "] << " + mensajeRecibido.getContenido()); 
+                    } else if (mensajeRecibido.getTipo() == MensajeChat.Tipo.BYE) {
+                        System.out.println("\r*** " + mensajeRecibido.getEmisor() + " se ha desconectado. ***");
+                    }
+                } else {
+                    System.out.println("\r[AVISO] << Trama de protocolo no válida recibida."); 
+                }
+                
                 System.out.print("[Hablando] >> "); 
                 
             } catch (SocketException e) {
