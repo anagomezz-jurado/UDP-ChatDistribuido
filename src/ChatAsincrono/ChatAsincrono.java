@@ -47,7 +47,7 @@ public class ChatAsincrono {
             //Configuración de parámetros de conexión
             InetAddress ipInterlocutor = InetAddress.getByName(ipInterlocutorStr);
             
-            chatSocket = new DatagramSocket(PUERTO_ESCUCHA);
+            chatSocket = new DatagramSocket();
             
             //Aranco el hilo receptor
             receptor = new HiloOye(chatSocket);
